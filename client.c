@@ -76,7 +76,6 @@ int main(int argc, char const *argv[])
             continue;
         }
         int no_arg = tokenize_str(str);
-        // printf("%d\n", no_arg);
         if (no_arg == 0)
         {
             continue;
@@ -111,6 +110,16 @@ int main(int argc, char const *argv[])
                     if (strcmp("missit", sbuf) == 0)
                     {
                         printf("File %s does not exist or client does not have permission to read/download\n", file_name);
+                        printf("------------------------------------------------------------------------------------------------------------\n");
+                        continue;
+                    }
+                    else if (strcmp("empty", sbuf) == 0)
+                    {
+                        int fd2 = open(arr[i], O_WRONLY | O_CREAT | O_TRUNC, 0664);
+                        printf("\rPercentage written: %3.2lf%% [%.*s%*s] (File is empty)", (double)100, 75, nav_string, 0, "");
+
+                        fflush(stdout);
+                        printf("\n%s Downloaded !!!\n", file_name);
                         printf("------------------------------------------------------------------------------------------------------------\n");
                         continue;
                     }

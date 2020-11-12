@@ -16,6 +16,7 @@ int main()
     char status[1005];
     char send_buffer[1000008];
     char str[1005];
+    char empty[100] = {0};
 
     // Creating socket file descriptor
     if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) // creates socket, SOCK_STREAM is for TCP. SOCK_DGRAM for UDP
@@ -42,7 +43,7 @@ int main()
         perror("bind failed");
         exit(EXIT_FAILURE);
     }
-
+    printf("Server started !!!\n");
     // Port bind is done. You want to wait for incoming connections and handle them in some way.
     // The process is two step: first you listen(), then you accept()
     if (listen(server_fd, 3) < 0) // 3 is the maximum size of queue - connections you haven't accepted
@@ -92,6 +93,14 @@ int main()
             {
                 printf("Server~> Sending %s to the client\n", buffer);
                 max_sz = lseek(fd, 0, SEEK_END);
+                if (max_sz == 0)
+                {
+                    printf("Server~> Sent %s to the client\n", buffer);
+                    strcpy(empty, "empty");
+
+                    send(new_socket, empty, strlen(empty), 0); // use sendto() and recvfrom() for DGRAM
+                    continue;
+                }
                 lseek(fd, 0, SEEK_SET);
                 sprintf(str, "%d", max_sz);
                 send(new_socket, str, strlen(str), 0); // use sendto() and recvfrom() for DGRAM
@@ -114,9 +123,10 @@ int main()
                         break;
                     }
                 }
-                printf("Server~> Sent %s to the server\n", buffer);
+                printf("Server~> Sent %s to the client\n", buffer);
             }
         }
+        printf("Client has diconnected . Waiting for next ...\n");
     }
     return 0;
 }
